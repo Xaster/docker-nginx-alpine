@@ -268,6 +268,4 @@ VOLUME ["/usr/share/nginx/html", "/etc/nginx", "/etc/certs", "/var/log/nginx", "
 EXPOSE 80 443
 ENV TIMEZONE=""
 
-STOPSIGNAL SIGTERM
-
 CMD ["/etc/nginx_default/Run.sh"]

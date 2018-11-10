@@ -22,7 +22,8 @@ $ docker run -d \
     -v /LOG_DIR:/var/log/nginx \
     -v /CACHE_DIR:/var/cache/nginx \
     -v /PID_DIR:/var/run/nginx \
-    -p 80:80 -p 443:443 \
+    -p 80:80 \
+    -p 443:443 \
     -e TIMEZONE=YOUR_TIME_ZONE \
     xaster/docker-nginx-alpine
 ```
