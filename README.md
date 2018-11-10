@@ -3,8 +3,8 @@ Docker: Nginx With All Official Modules And Some Third Party Modules (Based On A
 
 # Third Party Modules
 ```
-Jemalloc
-OpenSSL
+Jemalloc (Share Library)
+OpenSSL (Software And Share Library)
 Nginx Module:Cache-Purge
 Nginx Module:Brotli
 Nginx Module:PageSpeed

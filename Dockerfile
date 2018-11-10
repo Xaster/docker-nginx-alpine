@@ -29,6 +29,7 @@ RUN cd \
         grep -o '/upx-[a-zA-Z0-9.]*-amd64_linux[.]tar[.]xz' | \
         sed -e 's~^/upx-~~' -e 's~\-amd64_linux\.tar\.xz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -37,6 +38,7 @@ RUN cd \
         grep -o '/apr/apr-[a-zA-Z0-9.]*[.]tar[.]bz2' | \
         sed -e 's~^/apr/apr-~~' -e 's~\.tar\.bz2$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -45,6 +47,7 @@ RUN cd \
         grep -o '/apr/apr-util-[a-zA-Z0-9.]*[.]tar[.]bz2' | \
         sed -e 's~^/apr/apr-util-~~' -e 's~\.tar\.bz2$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -53,6 +56,7 @@ RUN cd \
         grep -o '/httpd/httpd-[a-zA-Z0-9.]*[.]tar[.]bz2' | \
         sed -e 's~^/httpd/httpd-~~' -e 's~\.tar\.bz2$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -61,6 +65,7 @@ RUN cd \
         grep -o '/incubator-pagespeed-ngx/archive/v[a-zA-Z0-9.]*-stable[.]tar[.]gz' | \
         sed -e 's~^/incubator-pagespeed-ngx/archive/v~~' -e 's~\-stable\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -69,6 +74,7 @@ RUN cd \
         grep -o '/ngx_cache_purge/archive/[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/ngx_cache_purge/archive/~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -77,6 +83,7 @@ RUN cd \
         grep -o '/download/nginx-[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/download/nginx-~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -258,6 +265,7 @@ RUN apk upgrade --no-cache \
     && mkdir -p /usr/share/nginx/html \
     && mkdir -p /etc/nginx \
     && mkdir -p /var/log/nginx \
+    && mkdir -p /var/run/nginx \
     && mkdir -p /etc/certs \
     && chown -R nginx:nginx /usr/share/nginx/html \
     && chmod +x /etc/nginx_default/Run.sh \
