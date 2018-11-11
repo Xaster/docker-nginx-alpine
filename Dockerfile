@@ -7,7 +7,6 @@ RUN cd \
         curl \
         git \
         wget \
-        xz \
         sed \
         gperf \
         icu-dev \
@@ -25,15 +24,6 @@ RUN cd \
         geoip-dev \
         jemalloc-dev \
         gettext-dev \
-    && UPX_VERSION=$(curl -sS --fail https://github.com/upx/upx/releases | \
-        grep -o '/upx-[a-zA-Z0-9.]*-amd64_linux[.]tar[.]xz' | \
-        sed -e 's~^/upx-~~' -e 's~\-amd64_linux\.tar\.xz$~~' | \
-        sed '/alpha.*/Id' | \
-        sed '/pre.*/Id' | \
-        sed '/beta.*/Id' | \
-        sed '/rc.*/Id' | \
-        sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
-        tail -n 1) \
     && APR_VERSION=$(curl -sS --fail http://apr.apache.org/download.cgi | \
         grep -o '/apr/apr-[a-zA-Z0-9.]*[.]tar[.]bz2' | \
         sed -e 's~^/apr/apr-~~' -e 's~\.tar\.bz2$~~' | \
@@ -88,22 +78,18 @@ RUN cd \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
-    && wget --no-check-certificate https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-amd64_linux.tar.xz \
     && wget --no-check-certificate https://www-us.apache.org/dist//apr/apr-${APR_VERSION}.tar.bz2 \
     && wget --no-check-certificate https://www-us.apache.org/dist//apr/apr-util-${APR_UTIL_VERSION}.tar.bz2 \
     && wget --no-check-certificate https://www-us.apache.org/dist//httpd/httpd-${HTTPD_VERSION}.tar.bz2 \
     && wget --no-check-certificate https://github.com/apache/incubator-pagespeed-ngx/archive/v${NPS_VERSION}-stable.tar.gz \
     && wget --no-check-certificate https://github.com/FRiCKLE/ngx_cache_purge/archive/${NCP_VERSION}.tar.gz \
     && wget --no-check-certificate https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz \
-    && xz -d upx-${UPX_VERSION}-amd64_linux.tar.xz \
-    && tar -xvf upx-${UPX_VERSION}-amd64_linux.tar \
     && tar -xjvf apr-${APR_VERSION}.tar.bz2 \
     && tar -xjvf apr-util-${APR_UTIL_VERSION}.tar.bz2 \
     && tar -xjvf httpd-${HTTPD_VERSION}.tar.bz2 \
     && tar -xvzf v${NPS_VERSION}-stable.tar.gz \
     && tar -xvzf ${NCP_VERSION}.tar.gz \
     && tar -xvzf nginx-${NGINX_VERSION}.tar.gz \
-    && mv -f upx-${UPX_VERSION}-amd64_linux upx \
     && mv -f apr-${APR_VERSION} apr \
     && mv -f apr-util-${APR_UTIL_VERSION} apr-util \
     && mv -f httpd-${HTTPD_VERSION} httpd \
@@ -123,7 +109,6 @@ RUN cd \
         ngx_brotli \
     && cd $HOME/ngx_brotli \
     && git submodule update --init \
-    && cp -f $HOME/upx/upx /bin \
     && cd $HOME/apr \
     && ./configure --prefix=/usr/local \
     && make -j`nproc` \
@@ -237,14 +222,11 @@ RUN cd \
     && wget --no-check-certificate -O /etc/nginx/Run.sh https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/Run.sh \
     && strip /usr/sbin/nginx* \
     && strip /usr/lib/nginx/modules/*.so \
-    && find /usr/sbin -name "nginx*" -type f | \
-        xargs upx \
     && mv -f /usr/bin/envsubst /usr/bin/envsubst_default \
     && apk del .build-deps \
     && rm -rf \
         $HOME/* \
-        /usr/local/* \
-        /bin/upx
+        /usr/local/*
 
 FROM alpine:latest
 
