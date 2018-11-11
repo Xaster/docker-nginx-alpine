@@ -33,6 +33,9 @@ RUN cd \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
+    && wget --no-check-certificate https://www-us.apache.org/dist//apr/apr-${APR_VERSION}.tar.bz2 \
+    && tar -xjvf apr-${APR_VERSION}.tar.bz2 \
+    && mv -f apr-${APR_VERSION} apr \
     && APR_UTIL_VERSION=$(curl -sS --fail http://apr.apache.org/download.cgi | \
         grep -o '/apr/apr-util-[a-zA-Z0-9.]*[.]tar[.]bz2' | \
         sed -e 's~^/apr/apr-util-~~' -e 's~\.tar\.bz2$~~' | \
@@ -42,6 +45,9 @@ RUN cd \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
+    && wget --no-check-certificate https://www-us.apache.org/dist//apr/apr-util-${APR_UTIL_VERSION}.tar.bz2 \
+    && tar -xjvf apr-util-${APR_UTIL_VERSION}.tar.bz2 \
+    && mv -f apr-util-${APR_UTIL_VERSION} apr-util \
     && HTTPD_VERSION=$(curl -sS --fail http://httpd.apache.org/download.cgi | \
         grep -o '/httpd/httpd-[a-zA-Z0-9.]*[.]tar[.]bz2' | \
         sed -e 's~^/httpd/httpd-~~' -e 's~\.tar\.bz2$~~' | \
@@ -51,6 +57,9 @@ RUN cd \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
+    && wget --no-check-certificate https://www-us.apache.org/dist//httpd/httpd-${HTTPD_VERSION}.tar.bz2 \
+    && tar -xjvf httpd-${HTTPD_VERSION}.tar.bz2 \
+    && mv -f httpd-${HTTPD_VERSION} httpd \
     && NPS_VERSION=$(curl -sS --fail https://github.com/apache/incubator-pagespeed-ngx/releases | \
         grep -o '/incubator-pagespeed-ngx/archive/v[a-zA-Z0-9.]*-stable[.]tar[.]gz' | \
         sed -e 's~^/incubator-pagespeed-ngx/archive/v~~' -e 's~\-stable\.tar\.gz$~~' | \
@@ -60,6 +69,9 @@ RUN cd \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
+    && wget --no-check-certificate https://github.com/apache/incubator-pagespeed-ngx/archive/v${NPS_VERSION}-stable.tar.gz \
+    && tar -xvzf v${NPS_VERSION}-stable.tar.gz \
+    && mv -f incubator-pagespeed-ngx-${NPS_VERSION}-stable ngx_pagespeed \
     && NCP_VERSION=$(curl -sS --fail https://github.com/FRiCKLE/ngx_cache_purge/releases | \
         grep -o '/ngx_cache_purge/archive/[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/ngx_cache_purge/archive/~~' -e 's~\.tar\.gz$~~' | \
@@ -69,6 +81,9 @@ RUN cd \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
+    && wget --no-check-certificate https://github.com/FRiCKLE/ngx_cache_purge/archive/${NCP_VERSION}.tar.gz \
+    && tar -xvzf ${NCP_VERSION}.tar.gz \
+    && mv -f ngx_cache_purge-${NCP_VERSION} ngx_cache_purge \
     && NGINX_VERSION=$(curl -sS --fail https://nginx.org/en/download.html | \
         grep -o '/download/nginx-[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/download/nginx-~~' -e 's~\.tar\.gz$~~' | \
@@ -78,23 +93,8 @@ RUN cd \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
-    && wget --no-check-certificate https://www-us.apache.org/dist//apr/apr-${APR_VERSION}.tar.bz2 \
-    && wget --no-check-certificate https://www-us.apache.org/dist//apr/apr-util-${APR_UTIL_VERSION}.tar.bz2 \
-    && wget --no-check-certificate https://www-us.apache.org/dist//httpd/httpd-${HTTPD_VERSION}.tar.bz2 \
-    && wget --no-check-certificate https://github.com/apache/incubator-pagespeed-ngx/archive/v${NPS_VERSION}-stable.tar.gz \
-    && wget --no-check-certificate https://github.com/FRiCKLE/ngx_cache_purge/archive/${NCP_VERSION}.tar.gz \
     && wget --no-check-certificate https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz \
-    && tar -xjvf apr-${APR_VERSION}.tar.bz2 \
-    && tar -xjvf apr-util-${APR_UTIL_VERSION}.tar.bz2 \
-    && tar -xjvf httpd-${HTTPD_VERSION}.tar.bz2 \
-    && tar -xvzf v${NPS_VERSION}-stable.tar.gz \
-    && tar -xvzf ${NCP_VERSION}.tar.gz \
     && tar -xvzf nginx-${NGINX_VERSION}.tar.gz \
-    && mv -f apr-${APR_VERSION} apr \
-    && mv -f apr-util-${APR_UTIL_VERSION} apr-util \
-    && mv -f httpd-${HTTPD_VERSION} httpd \
-    && mv -f incubator-pagespeed-ngx-${NPS_VERSION}-stable ngx_pagespeed \
-    && mv -f ngx_cache_purge-${NCP_VERSION} ngx_cache_purge \
     && mv -f nginx-$NGINX_VERSION nginx \
     && git clone -b v${NPS_VERSION} \
         --recurse-submodules \
@@ -144,14 +144,14 @@ RUN cd \
     && mkdir -p $HOME/ngx_pagespeed/psol/lib/Release/linux/x64 \
     && mkdir -p $HOME/ngx_pagespeed/psol/include/out/Release \
     && cd $HOME/modpagespeed \
-    && cp -rf out/Release/obj $HOME/ngx_pagespeed/psol/include/out/Release/ \
-    && cp -rf pagespeed/automatic/pagespeed_automatic.a $HOME/ngx_pagespeed/psol/lib/Release/linux/x64/ \
+    && cp -rf out/Release/obj $HOME/ngx_pagespeed/psol/include/out/Release \
+    && cp -rf pagespeed/automatic/pagespeed_automatic.a $HOME/ngx_pagespeed/psol/lib/Release/linux/x64 \
     && cp -rf net \
         pagespeed \
         testing \
         third_party \
         url \
-        $HOME/ngx_pagespeed/psol/include/ \
+        $HOME/ngx_pagespeed/psol/include \
     && cd $HOME/nginx \
     && ./configure \
         --prefix=/etc/nginx \
@@ -212,8 +212,8 @@ RUN cd \
         /etc/nginx/mime.types.default \
         /etc/nginx/fastcgi_params.default \
         /etc/nginx/fastcgi.conf.default \
-    && mkdir -p /etc/nginx/conf.d/ \
-    && mkdir -p /etc/nginx/extra/ \
+    && mkdir -p /etc/nginx/conf.d \
+        /etc/nginx/extra \
     && strip /usr/sbin/nginx* \
     && strip /usr/lib/nginx/modules/*.so \
     && mv -f /usr/bin/envsubst /usr/bin/envsubst_default \
@@ -225,10 +225,10 @@ RUN cd \
 FROM alpine:latest
 
 COPY --from=build /usr/bin/envsubst_default /usr/bin/envsubst
-COPY --from=build /etc/nginx/html/ /usr/share/nginx/html_default/
-COPY --from=build /etc/nginx/ /etc/nginx_default/
+COPY --from=build /etc/nginx/html /usr/share/nginx/html_default
+COPY --from=build /etc/nginx /etc/nginx_default
 COPY --from=build /usr/sbin/nginx /usr/sbin/nginx
-COPY --from=build /usr/lib/nginx/modules/ /usr/lib/nginx/modules/
+COPY --from=build /usr/lib/nginx/modules /usr/lib/nginx/modules
 
 RUN apk upgrade --no-cache \
     && RUN_DEPS=$(scanelf --needed --nobanner --format '%n#p' /usr/sbin/nginx /usr/lib/nginx/modules/*.so /usr/bin/envsubst | \
@@ -245,10 +245,10 @@ RUN apk upgrade --no-cache \
     && addgroup -S nginx \
     && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
     && mkdir -p /usr/share/nginx/html \
-    && mkdir -p /etc/nginx \
-    && mkdir -p /var/log/nginx \
-    && mkdir -p /var/run/nginx \
-    && mkdir -p /etc/certs \
+        /etc/nginx \
+        /var/log/nginx \
+        /var/run/nginx \
+        /etc/certs \
     && chown -R nginx:nginx /usr/share/nginx/html \
     && chmod +x /usr/bin/CMD-Shell
 
