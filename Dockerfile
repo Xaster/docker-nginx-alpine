@@ -214,12 +214,6 @@ RUN cd \
         /etc/nginx/fastcgi.conf.default \
     && mkdir -p /etc/nginx/conf.d/ \
     && mkdir -p /etc/nginx/extra/ \
-    && wget --no-check-certificate -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/nginx.conf \
-    && wget --no-check-certificate -O /etc/nginx/conf.d/default.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/default.conf \
-    && wget --no-check-certificate -O /etc/nginx/extra/pagespeed.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/pagespeed.conf \
-    && wget --no-check-certificate -O /etc/nginx/extra/cache_purge.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/cache_purge.conf \
-    && wget --no-check-certificate -O /etc/nginx/extra/brotli.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/brotli.conf \
-    && wget --no-check-certificate -O /etc/nginx/Run.sh https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/Run.sh \
     && strip /usr/sbin/nginx* \
     && strip /usr/lib/nginx/modules/*.so \
     && mv -f /usr/bin/envsubst /usr/bin/envsubst_default \
@@ -242,6 +236,12 @@ RUN apk upgrade --no-cache \
         sort -u | \
         awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }') \
     && apk add --no-cache $RUN_DEPS tzdata \
+    && wget --no-check-certificate -O /etc/nginx_default/nginx.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/nginx.conf \
+    && wget --no-check-certificate -O /etc/nginx_default/conf.d/default.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/default.conf \
+    && wget --no-check-certificate -O /etc/nginx_default/extra/pagespeed.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/pagespeed.conf \
+    && wget --no-check-certificate -O /etc/nginx_default/extra/cache_purge.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/cache_purge.conf \
+    && wget --no-check-certificate -O /etc/nginx_default/extra/brotli.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/brotli.conf \
+    && wget --no-check-certificate -O /usr/bin/CMD-Shell https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/CMD-Shell \
     && addgroup -S nginx \
     && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
     && mkdir -p /usr/share/nginx/html \
@@ -250,7 +250,7 @@ RUN apk upgrade --no-cache \
     && mkdir -p /var/run/nginx \
     && mkdir -p /etc/certs \
     && chown -R nginx:nginx /usr/share/nginx/html \
-    && chmod +x /etc/nginx_default/Run.sh \
+    && chmod +x /usr/bin/CMD-Shell \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
@@ -258,4 +258,4 @@ VOLUME ["/usr/share/nginx/html", "/etc/nginx", "/etc/certs", "/var/log/nginx", "
 EXPOSE 80 443
 ENV TIMEZONE=""
 
-CMD ["/etc/nginx_default/Run.sh"]
+CMD ["CMD-Shell"]
