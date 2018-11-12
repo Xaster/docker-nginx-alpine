@@ -129,7 +129,7 @@ RUN cd \
     && wget --no-check-certificate https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/modpagespeed/stack_trace_posix.patch \
     && for i in *.patch; do printf "\r\nApplying patch ${i%%.*}\r\n"; patch -p1 < $i || exit 1; done \
     && cd $HOME/modpagespeed/tools/gyp \
-    && ./setup.py install \
+    && ./setup.py install --record $HOME/Python-Install.txt \
     && cd $HOME/modpagespeed \
     && build/gyp_chromium --depth=. \
         -D use_system_libs=1 \
@@ -216,6 +216,7 @@ RUN cd \
         /etc/nginx/fastcgi.conf.default \
     && mv -f /usr/bin/envsubst /usr/bin/envsubst_default \
     && apk del .build-deps \
+    && cat $HOME/Python-Install.txt | xargs rm -rf \
     && rm -rf \
         $HOME/* \
         /usr/local/*
