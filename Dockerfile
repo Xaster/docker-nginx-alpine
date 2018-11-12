@@ -203,6 +203,8 @@ RUN cd \
         --with-ld-opt='-ljemalloc -Wl,-z,relro,--start-group -licuuc -lapr-1 -laprutil-1 -lpng -ljpeg' \
     && make -j`nproc` \
     && make install -j`nproc` \
+    && strip /usr/sbin/nginx* \
+    && strip /usr/lib/nginx/modules/*.so \
     && cd \
     && rm -rf \
         /etc/nginx/nginx.conf \
@@ -212,10 +214,6 @@ RUN cd \
         /etc/nginx/mime.types.default \
         /etc/nginx/fastcgi_params.default \
         /etc/nginx/fastcgi.conf.default \
-    && mkdir -p /etc/nginx/conf.d \
-        /etc/nginx/extra \
-    && strip /usr/sbin/nginx* \
-    && strip /usr/lib/nginx/modules/*.so \
     && mv -f /usr/bin/envsubst /usr/bin/envsubst_default \
     && apk del .build-deps \
     && rm -rf \
@@ -231,26 +229,29 @@ COPY --from=build /usr/sbin/nginx /usr/sbin/nginx
 COPY --from=build /usr/lib/nginx/modules /usr/lib/nginx/modules
 
 RUN apk upgrade --no-cache \
-    && RUN_DEPS=$(scanelf --needed --nobanner --format '%n#p' /usr/sbin/nginx /usr/lib/nginx/modules/*.so /usr/bin/envsubst | \
-        tr ',' '\n' | \
-        sort -u | \
-        awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }') \
-    && apk add --no-cache $RUN_DEPS tzdata \
+    && addgroup -S nginx \
+    && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
+    && mkdir -p \
+        /usr/share/nginx/html \
+        /etc/nginx \
+        /etc/nginx_default/conf.d \
+        /etc/nginx_default/extra \
+        /etc/certs \
+        /var/log/nginx \
+        /var/run/nginx \
+    && chown -R nginx:nginx /usr/share/nginx/html \
     && wget --no-check-certificate -O /etc/nginx_default/nginx.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/nginx.conf \
     && wget --no-check-certificate -O /etc/nginx_default/conf.d/default.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/default.conf \
     && wget --no-check-certificate -O /etc/nginx_default/extra/pagespeed.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/pagespeed.conf \
     && wget --no-check-certificate -O /etc/nginx_default/extra/cache_purge.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/cache_purge.conf \
     && wget --no-check-certificate -O /etc/nginx_default/extra/brotli.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/brotli.conf \
     && wget --no-check-certificate -O /usr/bin/CMD-Shell https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/CMD-Shell \
-    && addgroup -S nginx \
-    && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
-    && mkdir -p /usr/share/nginx/html \
-        /etc/nginx \
-        /var/log/nginx \
-        /var/run/nginx \
-        /etc/certs \
-    && chown -R nginx:nginx /usr/share/nginx/html \
     && chmod +x /usr/bin/CMD-Shell \
+    && RUN_DEPS=$(scanelf --needed --nobanner --format '%n#p' /usr/sbin/nginx /usr/lib/nginx/modules/*.so /usr/bin/envsubst | \
+        tr ',' '\n' | \
+        sort -u | \
+        awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }') \
+    && apk add --no-cache $RUN_DEPS tzdata \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 

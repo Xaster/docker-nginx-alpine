@@ -35,6 +35,8 @@ fi
 find /usr/share/nginx/html -name "index.*" | grep -q "index."
 if [ $? -ne 0 ];then
   cp /usr/share/nginx/html_default/index.html /usr/share/nginx/html/index.html
-  cp /usr/share/nginx/html_default/50x.html /usr/share/nginx/html/50x.html
+  if [ ! -f "/usr/share/nginx/html/50x.html" ];then
+    cp /usr/share/nginx/html_default/50x.html /usr/share/nginx/html/50x.html
+  fi
 fi
 nginx -g 'daemon off;'
