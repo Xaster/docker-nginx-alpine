@@ -250,7 +250,9 @@ RUN apk upgrade --no-cache \
         /var/run/nginx \
         /etc/certs \
     && chown -R nginx:nginx /usr/share/nginx/html \
-    && chmod +x /usr/bin/CMD-Shell
+    && chmod +x /usr/bin/CMD-Shell \
+    && ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log
 
 VOLUME ["/usr/share/nginx/html", "/etc/nginx", "/etc/certs", "/var/log/nginx", "/var/cache/nginx", "/var/run/nginx"]
 EXPOSE 80 443

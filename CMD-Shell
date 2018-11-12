@@ -1,10 +1,4 @@
 #!/bin/sh
-touch /var/log/nginx/access.log
-chmod 640 /var/log/nginx/access.log
-chown nginx:adm /var/log/nginx/access.log
-touch /var/log/nginx/error.log
-chmod 640 /var/log/nginx/error.log
-chown nginx:adm /var/log/nginx/error.log
 test -f '/etc/nginx/fastcgi.conf' || cp /etc/nginx_default/fastcgi.conf /etc/nginx/fastcgi.conf
 test -f '/etc/nginx/fastcgi.conf.default' || cp /etc/nginx_default/fastcgi.conf /etc/nginx/fastcgi.conf.default
 test -f '/etc/nginx/fastcgi_params' || cp /etc/nginx_default/fastcgi_params /etc/nginx/fastcgi_params
@@ -43,5 +37,4 @@ if [ $? -ne 0 ];then
   cp /usr/share/nginx/html_default/index.html /usr/share/nginx/html/index.html
   cp /usr/share/nginx/html_default/50x.html /usr/share/nginx/html/50x.html
 fi
-nginx -c /etc/nginx/nginx.conf
-sh
+nginx -g 'daemon off;'
