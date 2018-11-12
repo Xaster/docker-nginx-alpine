@@ -206,6 +206,9 @@ RUN cd \
     && strip /usr/sbin/nginx* \
     && strip /usr/lib/nginx/modules/*.so \
     && cd \
+    && mv -f /usr/bin/envsubst /usr/bin/envsubst_default \
+    && apk del .build-deps \
+    && cat $HOME/Python-Install.txt | xargs rm -rf \
     && rm -rf \
         /etc/nginx/nginx.conf \
         /etc/nginx/nginx.conf.default \
@@ -214,10 +217,6 @@ RUN cd \
         /etc/nginx/mime.types.default \
         /etc/nginx/fastcgi_params.default \
         /etc/nginx/fastcgi.conf.default \
-    && mv -f /usr/bin/envsubst /usr/bin/envsubst_default \
-    && apk del .build-deps \
-    && cat $HOME/Python-Install.txt | xargs rm -rf \
-    && rm -rf \
         $HOME/* \
         /usr/local/*
 
