@@ -14,8 +14,8 @@ cp -f /etc/nginx_default/uwsgi_params /etc/nginx/uwsgi_params.default
 test -f '/etc/nginx/win-utf' || cp /etc/nginx_default/win-utf /etc/nginx/win-utf
 test -f '/etc/nginx/koi-utf' || cp /etc/nginx_default/koi-utf /etc/nginx/koi-utf
 test -f '/etc/nginx/koi-win' || cp /etc/nginx_default/koi-win /etc/nginx/koi-win
-test -d '/etc/nginx/conf.d' || mkdir /etc/nginx/conf.d
-test -d '/etc/nginx/extra' || mkdir /etc/nginx/extra
+test -d '/etc/nginx/conf.d' || mkdir -p /etc/nginx/conf.d
+test -d '/etc/nginx/extra' || mkdir -p /etc/nginx/extra
 cp -f /etc/nginx_default/conf.d/default.conf /etc/nginx/conf.d/default.conf.default
 test -f '/etc/nginx/extra/pagespeed.conf' || cp /etc/nginx_default/extra/pagespeed.conf /etc/nginx/extra/pagespeed.conf
 cp -f /etc/nginx_default/extra/pagespeed.conf /etc/nginx/extra/pagespeed.conf.default
