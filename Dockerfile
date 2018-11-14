@@ -33,7 +33,7 @@ RUN cd \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
-    && wget --no-check-certificate https://www-us.apache.org/dist//apr/apr-${APR_VERSION}.tar.bz2 \
+    && wget https://www-us.apache.org/dist//apr/apr-${APR_VERSION}.tar.bz2 \
     && tar -xjvf apr-${APR_VERSION}.tar.bz2 \
     && mv -f apr-${APR_VERSION} apr \
     && APR_UTIL_VERSION=$(curl -sS --fail http://apr.apache.org/download.cgi | \
@@ -45,7 +45,7 @@ RUN cd \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
-    && wget --no-check-certificate https://www-us.apache.org/dist//apr/apr-util-${APR_UTIL_VERSION}.tar.bz2 \
+    && wget https://www-us.apache.org/dist//apr/apr-util-${APR_UTIL_VERSION}.tar.bz2 \
     && tar -xjvf apr-util-${APR_UTIL_VERSION}.tar.bz2 \
     && mv -f apr-util-${APR_UTIL_VERSION} apr-util \
     && HTTPD_VERSION=$(curl -sS --fail http://httpd.apache.org/download.cgi | \
@@ -57,7 +57,7 @@ RUN cd \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
-    && wget --no-check-certificate https://www-us.apache.org/dist//httpd/httpd-${HTTPD_VERSION}.tar.bz2 \
+    && wget https://www-us.apache.org/dist//httpd/httpd-${HTTPD_VERSION}.tar.bz2 \
     && tar -xjvf httpd-${HTTPD_VERSION}.tar.bz2 \
     && mv -f httpd-${HTTPD_VERSION} httpd \
     && NPS_VERSION=$(curl -sS --fail https://github.com/apache/incubator-pagespeed-ngx/releases | \
@@ -69,7 +69,7 @@ RUN cd \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
-    && wget --no-check-certificate https://github.com/apache/incubator-pagespeed-ngx/archive/v${NPS_VERSION}-stable.tar.gz \
+    && wget https://github.com/apache/incubator-pagespeed-ngx/archive/v${NPS_VERSION}-stable.tar.gz \
     && tar -xvzf v${NPS_VERSION}-stable.tar.gz \
     && mv -f incubator-pagespeed-ngx-${NPS_VERSION}-stable ngx_pagespeed \
     && NCP_VERSION=$(curl -sS --fail https://github.com/FRiCKLE/ngx_cache_purge/releases | \
@@ -81,7 +81,7 @@ RUN cd \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
-    && wget --no-check-certificate https://github.com/FRiCKLE/ngx_cache_purge/archive/${NCP_VERSION}.tar.gz \
+    && wget https://github.com/FRiCKLE/ngx_cache_purge/archive/${NCP_VERSION}.tar.gz \
     && tar -xvzf ${NCP_VERSION}.tar.gz \
     && mv -f ngx_cache_purge-${NCP_VERSION} ngx_cache_purge \
     && NGINX_VERSION=$(curl -sS --fail https://nginx.org/en/download.html | \
@@ -93,7 +93,7 @@ RUN cd \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
-    && wget --no-check-certificate https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz \
+    && wget https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz \
     && tar -xvzf nginx-${NGINX_VERSION}.tar.gz \
     && mv -f nginx-$NGINX_VERSION nginx \
     && git clone -b v${NPS_VERSION} \
@@ -122,11 +122,11 @@ RUN cd \
     && make -j`nproc` \
     && make install -j`nproc` \
     && cd $HOME/modpagespeed \
-    && wget --no-check-certificate https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/modpagespeed/automatic_makefile.patch \
-    && wget --no-check-certificate https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/modpagespeed/libpng16.patch \
-    && wget --no-check-certificate https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/modpagespeed/pthread_nonrecursive_np.patch \
-    && wget --no-check-certificate https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/modpagespeed/rename_c_symbols.patch \
-    && wget --no-check-certificate https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/modpagespeed/stack_trace_posix.patch \
+    && wget https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/modpagespeed/automatic_makefile.patch \
+    && wget https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/modpagespeed/libpng16.patch \
+    && wget https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/modpagespeed/pthread_nonrecursive_np.patch \
+    && wget https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/modpagespeed/rename_c_symbols.patch \
+    && wget https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/modpagespeed/stack_trace_posix.patch \
     && for i in *.patch; do printf "\r\nApplying patch ${i%%.*}\r\n"; patch -p1 < $i || exit 1; done \
     && cd $HOME/modpagespeed/tools/gyp \
     && ./setup.py install --record $HOME/Python-Install.txt \
@@ -246,12 +246,12 @@ RUN apk upgrade --no-cache \
     && rm -rf /etc/nginx/html \
     && chown -R nginx:nginx /usr/share/nginx/html \
     && mv -f /etc/nginx/* /etc/nginx_default \
-    && wget --no-check-certificate -O /etc/nginx_default/nginx.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/nginx.conf \
-    && wget --no-check-certificate -O /etc/nginx_default/conf.d/default.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/default.conf \
-    && wget --no-check-certificate -O /etc/nginx_default/extra/pagespeed.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/pagespeed.conf \
-    && wget --no-check-certificate -O /etc/nginx_default/extra/cache_purge.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/cache_purge.conf \
-    && wget --no-check-certificate -O /etc/nginx_default/extra/brotli.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/brotli.conf \
-    && wget --no-check-certificate -O /usr/bin/CMD-Shell https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/CMD-Shell \
+    && wget -O /etc/nginx_default/nginx.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/nginx.conf \
+    && wget -O /etc/nginx_default/conf.d/default.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/default.conf \
+    && wget -O /etc/nginx_default/extra/pagespeed.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/pagespeed.conf \
+    && wget -O /etc/nginx_default/extra/cache_purge.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/cache_purge.conf \
+    && wget -O /etc/nginx_default/extra/brotli.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/brotli.conf \
+    && wget -O /usr/bin/CMD-Shell https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/CMD-Shell \
     && chmod +x /usr/bin/CMD-Shell \
     && RUN_DEPS=$(scanelf --needed --nobanner --format '%n#p' /usr/sbin/nginx /usr/lib/nginx/modules/*.so /usr/bin/envsubst | \
         tr ',' '\n' | \
