@@ -240,7 +240,7 @@ RUN apk upgrade --no-cache \
         /var/run/nginx \
     && addgroup -S nginx \
     && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
-    && mv /etc/nginx/html/index.html \
+    && mv -f /etc/nginx/html/index.html \
         /etc/nginx/html/50x.html \
         /usr/share/nginx/html_default \
     && rm -rf /etc/nginx/html \
