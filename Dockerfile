@@ -1,4 +1,4 @@
-FROM alpine:latest as build
+FROM alpine:latest AS build
 
 RUN cd \
     && apk upgrade --no-cache \
