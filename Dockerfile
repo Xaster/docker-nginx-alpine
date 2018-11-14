@@ -208,6 +208,7 @@ RUN cd \
     && cd \
     && mv -f /usr/bin/envsubst /usr/bin/envsubst_default \
     && apk del .build-deps \
+    && mv -f /usr/bin/envsubst_default /usr/bin/envsubst \
     && cat $HOME/Python-Install.txt | xargs rm -rf \
     && rm -rf \
         /etc/nginx/nginx.conf \
@@ -222,24 +223,29 @@ RUN cd \
 
 FROM alpine:latest
 
-COPY --from=build /usr/bin/envsubst_default /usr/bin/envsubst
-COPY --from=build /etc/nginx/html /usr/share/nginx/html_default
-COPY --from=build /etc/nginx /etc/nginx_default
+COPY --from=build /usr/bin/envsubst /usr/bin/envsubst
+COPY --from=build /etc/nginx /etc/nginx
 COPY --from=build /usr/sbin/nginx /usr/sbin/nginx
 COPY --from=build /usr/lib/nginx/modules /usr/lib/nginx/modules
 
 RUN apk upgrade --no-cache \
-    && addgroup -S nginx \
-    && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
     && mkdir -p \
         /usr/share/nginx/html \
-        /etc/nginx \
+        /usr/share/nginx/html_default \
         /etc/nginx_default/conf.d \
         /etc/nginx_default/extra \
         /etc/certs \
         /var/log/nginx \
+        /var/cache/nginx \
         /var/run/nginx \
+    && addgroup -S nginx \
+    && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
+    && mv /etc/nginx/html/index.html \
+        /etc/nginx/html/50x.html \
+        /usr/share/nginx/html_default \
+    && rm -rf /etc/nginx/html \
     && chown -R nginx:nginx /usr/share/nginx/html \
+    && mv -f /etc/nginx/* /etc/nginx_default \
     && wget --no-check-certificate -O /etc/nginx_default/nginx.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/nginx.conf \
     && wget --no-check-certificate -O /etc/nginx_default/conf.d/default.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/default.conf \
     && wget --no-check-certificate -O /etc/nginx_default/extra/pagespeed.conf https://raw.githubusercontent.com/Xaster/docker-nginx-alpine/master/nginx/pagespeed.conf \
